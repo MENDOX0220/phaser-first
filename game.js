@@ -1,46 +1,31 @@
 var game = new Phaser.Game(1200, 900,
     Phaser.CANVAS, "GameDiv")
-    var player;
+class Player {
+    constructor() {
+        this.sprite = game.add.sprite(100, 100, "player");
+        this.sprite.anchor.setTo(0.5, 0.5);
+        game.physics.arcade.enable(this.sprite);
+        this.moveSpeed = 300;
+    }
+    update() {
+        game.physics.arcade.moveToPointer(this.sprite, this.moveSpeed);
+        if (Phaser.Rectangle.contains(this.sprite.body,
+            game.input.mousePointer.x,
+            game.input.mousePointer.y)) {
+            this.sprite.body.velocity.setTo(0, 0);
+        }
+    }
+}
 var play = {
     preload: function () {
         game.load.image("player", "phaseee.png");
     },
     create: function () {
-        player = game.add.sprite(100, 100, "player");
-     
-        let up = game.input.keyboard.addKey(
-            Phaser.Keyboard.W
-        );  
-        up.onDown.add(this.up, this);
-
-        let down = game.input.keyboard.addKey(
-            Phaser.Keyboard.S
-        );  
-        down.onDown.add(this.down, this);
-
-        let right  = game.input.keyboard.addKey(
-            Phaser.Keyboard.D
-        );
-        right.onDown.add(this.right, this);
-
-        let left = game.input.keyboard.addKey(
-            Phaser.Keyboard.A
-        );  
-        left.onDown.add(this.left, this);
+        player = new Player();
     },
-    right : ()=> {
-        player.x += 100;
-    },
-    left : ()=> {
-        player.x -= 100;
-    },
-    up : () => {
-        player.y -= 100;
-    },
-    down : ()=>{
-        player.y += 100;
+    update: function () {
+        player.update();
     }
-         
 }
 game.state.add("Play", play);
 game.state.start("Play");
